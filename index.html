@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="pt-PT">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Rockford — Operação Zero | Protótipo 2D</title>
+<style>
+:root{color-scheme:dark;--bg:#080e1a;--card:#101c2dec;--accent:#b792fa;--mint:#75efd2;--danger:#f18d8c}
+*{box-sizing:border-box}html,body{height:100%;margin:0;background:var(--bg);font-family:system-ui,-apple-system,Segoe UI,sans-serif;color:#eef0fc;overflow:hidden}
+#game{display:block;width:100vw;height:100dvh;object-fit:contain;touch-action:none}
+#overlay{position:fixed;inset:0;background:radial-gradient(circle at 65% 38%,#243351ce,#080d18f2 70%);display:flex;align-items:center;justify-content:center;padding:22px;z-index:12}
+#panel{width:min(660px,94vw);border:1px solid #8394b260;background:#0d192cdb;backdrop-filter:blur(14px);padding:clamp(22px,5vw,40px);border-radius:22px;box-shadow:0 30px 110px #000b;}
+#kicker{font-size:12px;letter-spacing:.24em;color:#96f2d7;font-weight:800;margin-bottom:12px}
+h1{font-size:clamp(34px,6vw,66px);line-height:.98;letter-spacing:-.06em;margin:0 0 16px}h1 span{color:#b7a1fa}#desc{font-size:15px;line-height:1.7;color:#cad3e5}
+#panel .tags{display:flex;gap:8px;flex-wrap:wrap;margin:16px 0 22px}.tags span{font-size:11px;color:#c4d4ea;background:#26364a;padding:6px 10px;border-radius:30px}
+.primary{font:inherit;font-weight:800;letter-spacing:.07em;background:#a1f0d8;color:#0b1825;border:0;border-radius:12px;padding:15px 24px;cursor:pointer;width:100%}.primary:hover{background:#c2fbe9}
+.hint{font-size:12px;line-height:1.6;color:#98a8bf;margin-top:17px}.hint b{color:#f1f3ff}
+#hudHelp{position:fixed;top:14px;left:50%;transform:translateX(-50%);font-size:12px;color:#b9c3d8;background:#101c2ad0;border:1px solid #ffffff26;padding:7px 14px;border-radius:15px;pointer-events:none;white-space:nowrap;z-index:2}
+#touch{display:none;position:fixed;inset:auto 0 0;z-index:8;justify-content:space-between;padding:12px max(12px,env(safe-area-inset-left)) calc(12px + env(safe-area-inset-bottom)) max(12px,env(safe-area-inset-right));pointer-events:none;gap:10px}
+.touchGroup{display:flex;align-items:end;gap:9px}.tbtn{touch-action:none;user-select:none;pointer-events:auto;border:1px solid #d3e5f484;background:#152e48dc;box-shadow:inset 0 0 0 1px #0009;color:#fff;font-size:16px;font-weight:900;min-width:53px;height:53px;border-radius:13px}.tbtn.hit{background:#643b79ed}.tbtn.evade{background:#226b6eed}.tbtn.heavy{background:#5f477ded}.tbtn:active{filter:brightness(1.45)}
+#pause{position:fixed;right:15px;top:13px;border:1px solid #61788c;background:#152539d9;color:#fafafa;border-radius:11px;padding:9px 13px;cursor:pointer;z-index:7;display:none}
+@media(pointer:coarse){#touch{display:flex}#hudHelp{display:none}}
+@media(max-height:560px){#panel{padding:16px 22px}#kicker{margin-bottom:6px}h1{font-size:35px;margin-bottom:10px}#desc{font-size:13px;margin:6px 0}.hint{margin-top:8px}}
+</style>
+</head>
+<body>
+<canvas id="game" width="960" height="540" aria-label="Jogo 2D Rockford Operação Zero"></canvas>
+<div id="hudHelp">A / D mover · ESPAÇO saltar · J combo · L golpe pesado · K esquiva · P pausa</div>
+<button id="pause">Ⅱ Pausa</button>
+<div id="touch" aria-label="Controlos de toque"><div class="touchGroup"><button class="tbtn" data-key="left">◀</button><button class="tbtn" data-key="right">▶</button></div><div class="touchGroup"><button class="tbtn" data-key="jump">↥</button><button class="tbtn hit" data-key="attack">J</button><button class="tbtn heavy" data-key="heavy">L</button><button class="tbtn evade" data-key="dodge">↯</button></div></div>
+<div id="overlay"><section id="panel"><div id="kicker">USLORDS · CONCEITO NÃO CANÓNICO · DEMO WEB</div><h1>ROCKFORD<span> / </span><br>OPERAÇÃO ZERO</h1><p id="desc">Um protótipo de hack and slash militar 2D. Rockford, durante o seu passado nas forças especiais Muscmen, atravessa uma instalação inimiga. Usa combos, esquiva e golpes pesados para vencer as três zonas.</p><div class="tags"><span>100% gratuito</span><span>Joga no navegador</span><span>Sem servidores</span><span>Arte provisória</span></div><button class="primary" id="start">INICIAR OPERAÇÃO</button><div class="hint">Teclado: <b>A/D</b> mover · <b>Espaço</b> saltar · <b>J</b> combo · <b>L</b> golpe pesado · <b>K</b> esquiva · <b>P</b> pausa. Também inclui comandos táteis.</div></section></div>
+<script>
+(()=>{
+'use strict';
+const canvas=document.getElementById('game'),ctx=canvas.getContext('2d'),overlay=document.getElementById('overlay'),startBtn=document.getElementById('start'),pauseBtn=document.getElementById('pause'),desc=document.getElementById('desc');
+const W=960,H=540,FLOOR=439,WORLD=2520,keys={},was={},waves=[{gate:770,count:4,level:1,name:'PERÍMETRO'},{gate:1550,count:5,level:2,name:'DEPÓSITO'},{gate:2440,count:4,level:3,name:'COMANDO'}];
+let player,enemies,particles,cam=0,tick=0,mode='menu',wave=0,gateOpen=false,score=0,style=0,styleTimer=0,combo=0,comboTimer=0,shake=0,banner='',bannerTimer=0,hitStop=0,stars=[];
+for(let i=0;i<90;i++)stars.push({x:(i*83.83)%WORLD,y:20+(i*61)%310,r:.5+(i%3)*.3});
+const clamp=(v,min,max)=>Math.max(min,Math.min(max,v)); const pressed=(k)=>keys[k]&&!was[k];
+function rand(a,b){return a+Math.random()*(b-a)}
+function reset(){player={x:100,y:FLOOR,vx:0,vy:0,face:1,hp:100,maxhp:100,on:true,inv:0,att:0,attackCd:0,heavyCd:0,dodge:0,dodgeCd:0,comboStage:0,comboWindow:0,flash:0};enemies=[];particles=[];cam=0;tick=0;wave=0;gateOpen=false;score=0;style=0;styleTimer=0;combo=0;comboTimer=0;shake=0;banner='SETOR 01 // PERÍMETRO';bannerTimer=145;hitStop=0;for(const k in keys)keys[k]=false;spawnWave();}
+function spawnWave(){let w=waves[wave];if(!w)return;const base=w.gate-310;for(let i=0;i<w.count;i++){let boss=wave===2&&i===w.count-1;enemies.push({x:base+i*74+rand(-8,8),y:FLOOR,vx:0,vy:0,hp:boss?180:wave===1?61:48,maxhp:boss?180:wave===1?61:48,face:-1,cd:rand(40,90),stun:0,hit:0,death:0,boss,phase:wave,attackWindup:0,attacked:false});}gateOpen=false;}
+function burst(x,y,col,n=12){for(let i=0;i<n;i++){let a=Math.random()*Math.PI*2,s=rand(1,6);particles.push({x,y,vx:Math.cos(a)*s,vy:Math.sin(a)*s-rand(0,2),life:rand(12,32),max:32,col,r:rand(1,4)});}}
+function notice(t){banner=t;bannerTimer=110;}
+function damageEnemy(e,dmg,dir){if(e.death>0||e.hp<=0)return;e.hp-=dmg;e.stun=e.boss?13:22;e.hit=12;e.vx=dir*(e.boss?3.3:6.8);shake=7;burst(e.x,e.y-54,e.boss?'#c2a3ff':'#93ffe0',17);score+=dmg*6;style+=e.boss?14:9;styleTimer=210;combo++;comboTimer=145;if(e.hp<=0){e.death=24;e.stun=30;score+=e.boss?1800:350;style+=40;burst(e.x,e.y-48,'#e6d5ff',38);}}
+function attack(heavy=false){if(mode!=='playing'||player.dodge>0)return;if(heavy){if(player.heavyCd>0)return;player.heavyCd=52;player.att=21;player.comboStage=0;}else{if(player.attackCd>0)return;player.comboStage=(player.comboWindow>0)?(player.comboStage%3)+1:1;player.comboWindow=41;player.attackCd=player.comboStage===3?22:12;player.att=player.comboStage===3?19:13;}let reach=heavy?138:player.comboStage===3?118:90,dmg=heavy?38:player.comboStage===3?26:15;for(const e of enemies){if(e.hp<=0)continue;const dx=e.x-player.x;if(Math.abs(dx)<reach&&Math.abs(e.y-player.y)<95&&dx*player.face>-(heavy?35:20)){damageEnemy(e,dmg,player.face);if(player.comboStage===3||heavy){e.vy=-7;}}}burst(player.x+player.face*60,player.y-48,heavy?'#bb9aff':'#9ffce0',heavy?24:11);}
+function dodge(){if(player.dodgeCd>0||mode!=='playing')return;player.dodge=16;player.dodgeCd=68;player.inv=22;player.vx=player.face*13;burst(player.x,player.y-25,'#a5f3e5',18);}
+function hurt(dmg,dir){if(player.inv>0||mode!=='playing')return;player.hp=Math.max(0,player.hp-dmg);player.inv=55;player.vx=dir*6;player.flash=18;combo=0;comboTimer=0;shake=13;burst(player.x,player.y-44,'#ff7e89',22);if(player.hp<=0)finish(false)}
+function finish(win){mode=win?'victory':'defeat';overlay.style.display='flex';pauseBtn.style.display='none';document.querySelector('h1').innerHTML=win?'MISSÃO <span>COMPLETA</span>':'MISSÃO <span>FALHADA</span>';document.getElementById('kicker').textContent=win?'PROTÓTIPO CONCLUÍDO':'TENTA NOVAMENTE';desc.textContent=win?`Pontuação ${score.toLocaleString('pt-PT')} · Estilo ${grade()} · Inimigos neutralizados. Esta demonstração é independente do cânone oficial.`:'Rockford foi derrotado. Experimenta alternar entre combos, golpes pesados e esquivas para sobreviver.';startBtn.textContent='RECOMEÇAR OPERAÇÃO';}
+function grade(){return style>=500?'SSS':style>=380?'SS':style>=290?'S':style>=200?'A':style>=115?'B':style>=55?'C':'D';}
+function togglePause(){if(mode==='playing'){mode='paused';overlay.style.display='flex';document.querySelector('h1').innerHTML='OPERAÇÃO <span>EM PAUSA</span>';document.getElementById('kicker').textContent='ROCKFORD // OPERAÇÃO ZERO';desc.textContent='Retoma o combate ou reinicia a missão.';startBtn.textContent='RETOMAR';}else if(mode==='paused'){mode='playing';overlay.style.display='none';}}
+function update(dt){tick+=dt;if(mode!=='playing')return;if(hitStop>0){hitStop-=dt;return;}for(let k in keys)was[k]=keys[k]; // input edges for action buttons are handled from events; movement uses continuous state
+ const left=keys.left,right=keys.right,jump=keys.jump;
+ if(player.inv>0)player.inv-=dt;if(player.flash>0)player.flash-=dt;if(player.att>0)player.att-=dt;if(player.attackCd>0)player.attackCd-=dt;if(player.heavyCd>0)player.heavyCd-=dt;if(player.dodgeCd>0)player.dodgeCd-=dt;if(player.dodge>0)player.dodge-=dt;if(player.comboWindow>0)player.comboWindow-=dt;if(comboTimer>0)comboTimer-=dt;else combo=0;if(styleTimer>0)styleTimer-=dt;else style=Math.max(0,style-dt*.45);if(shake>0)shake-=dt;if(bannerTimer>0)bannerTimer-=dt;
+ if(player.dodge<=0){const target=(right?5.4:0)-(left?5.4:0);player.vx+=(target-player.vx)*.22*dt;if(right&&!left)player.face=1;if(left&&!right)player.face=-1;}
+ player.x=clamp(player.x+player.vx*dt,28,WORLD-40);player.vy+=.64*dt;player.y+=player.vy*dt;if(player.y>=FLOOR){player.y=FLOOR;player.vy=0;player.on=true;}else player.on=false;
+ const limit=waves[wave]?.gate;if(!gateOpen&&limit&&player.x>limit-46){player.x=limit-46;player.vx=0;}
+ for(const e of enemies){if(e.death>0){e.death-=dt;continue;}if(e.hp<=0)continue;if(e.hit>0)e.hit-=dt;if(e.stun>0){e.stun-=dt;e.x+=e.vx*dt;e.vx*=.8; e.y+=e.vy*dt;e.vy+=.65*dt;if(e.y>FLOOR){e.y=FLOOR;e.vy=0}continue;}
+ const dx=player.x-e.x,dist=Math.abs(dx);e.face=Math.sign(dx)||1;e.cd-=dt;e.x+=e.vx*dt;e.vx*=.75;
+ if(e.attackWindup>0){e.attackWindup-=dt;if(e.attackWindup<=0&&!e.attacked){e.attacked=true;if(dist<(e.boss?123:72)&&Math.abs(player.y-e.y)<85)hurt(e.boss?21:11,e.face);burst(e.x+e.face*33,e.y-50,e.boss?'#e4b1ff':'#ffb29d',13);e.cd=e.boss?49:75;}}
+
+ if(e.attackWindup<=0&&e.cd<=0&&dist<(e.boss?118:65)&&Math.abs(player.y-e.y)<100){e.attackWindup=e.boss?23:19;e.attacked=false;}
+ else if(e.attackWindup<=0&&dist<490&&dist>(e.boss?92:49)){e.vx+=clamp(dx,-1,1)*(e.boss?.38:.29)*dt;e.vx=clamp(e.vx,-(e.boss?2.4:2.1),e.boss?2.4:2.1);e.x+=e.vx*dt;}
+ }
+ if(enemies.every(e=>e.hp<=0)&&!gateOpen){gateOpen=true;notice(wave===2?'ALVO PRINCIPAL NEUTRALIZADO':'SETOR LIMPO // AVANÇAR');player.hp=Math.min(player.maxhp,player.hp+16);score+=700;}
+ if(gateOpen&&player.x>(waves[wave]?.gate||WORLD)-50){wave++;if(wave>=waves.length){finish(true);return;}spawnWave();notice(`SETOR 0${wave+1} // ${waves[wave].name}`);}
+ cam+=(clamp(player.x-360,0,WORLD-W)-cam)*.12*dt;
+ for(const p of particles){p.x+=p.vx*dt;p.y+=p.vy*dt;p.vy+=.12*dt;p.life-=dt;}particles=particles.filter(p=>p.life>0);
+}
+// Visuals intentionally do not claim to be final approved Rockford art.
+function rounded(x,y,w,h,r,fill){ctx.fillStyle=fill;ctx.beginPath();ctx.roundRect(x,y,w,h,r);ctx.fill();}
+function line(x,y,xx,yy,col,w=2){ctx.strokeStyle=col;ctx.lineWidth=w;ctx.lineCap='round';ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(xx,yy);ctx.stroke()}
+function bg(){let shift=cam*.18;const sky=ctx.createLinearGradient(0,0,0,H);sky.addColorStop(0,'#0a0f1d');sky.addColorStop(.8,'#19263c');sky.addColorStop(1,'#253548');ctx.fillStyle=sky;ctx.fillRect(0,0,W,H);
+ for(let i=0;i<stars.length;i++){let s=stars[i],x=(s.x-shift*.3)%(W+140);if(x<0)x+=W+140;ctx.fillStyle='#c4e6ff33';ctx.fillRect(x,s.y,s.r,s.r)}
+ const off=-cam*.28;for(let i=-2;i<13;i++){let x=i*190+off%190;rounded(x,180,144,265,3,'#23334a');rounded(x+16,193,14,200,1,'#324b66');rounded(x+52,219,62,5,1,'#80c5d435');for(let j=0;j<5;j++)rounded(x+26+j*22,258,10,34,1,'#7693ac22');line(x,180,x+75,135,'#334b61',3)}
+ for(let i=-2;i<18;i++){let x=i*110-cam*.52%110;rounded(x,302,97,148,2,'#17263b');rounded(x+8,310,79,19,1,'#324a63');line(x+20,334,x+20,429,'#4e687a',2);line(x+70,334,x+70,429,'#4e687a',2)}
+ ctx.fillStyle='#263446';ctx.fillRect(0,FLOOR,W,H-FLOOR);ctx.fillStyle='#68a3aa';ctx.fillRect(0,FLOOR,W,3);for(let i=-1;i<21;i++){let x=i*135-cam%135;rounded(x+8,FLOOR+28,80,5,2,'#546075');rounded(x+15,FLOOR+60,18,4,2,'#121b2a')}
+ for(let x=450;x<WORLD;x+=330){let a=x-cam;if(a< -100||a>W+100)continue;rounded(a-22,FLOOR-59,70,59,2,'#263345');ctx.strokeStyle='#65768b';ctx.lineWidth=3;ctx.strokeRect(a-22,FLOOR-59,70,59);line(a-22,FLOOR-59,a+48,FLOOR,'#65768b',2);line(a+48,FLOOR-59,a-22,FLOOR,'#65768b',2)}
+ const g=waves[wave];if(g){let a=g.gate-cam;rounded(a-8,169,15,FLOOR-169,2,gateOpen?'#355f67':'#6b324f');rounded(a-15,167,30,21,3,gateOpen?'#86eed5':'#f498b2');ctx.fillStyle='#e9ebf5';ctx.font='bold 12px system-ui';ctx.fillText(gateOpen?'LIVRE':'BLOQUEADO',a-50,152);}
+}
+function rockford(p){const x=p.x-cam,y=p.y,f=p.face,t=tick*.2;ctx.save();ctx.translate(x,y);ctx.scale(f,1);if(p.inv>0&&Math.floor(tick/4)%2===0)ctx.globalAlpha=.56;
+ const stride=Math.sin(t)*Math.min(1,Math.abs(p.vx)/5)*14; // stylized placeholder: short horns, NO ears, NO external nose
+ ctx.fillStyle='#0c1320';ctx.beginPath();ctx.ellipse(0,-1,29,7,0,0,Math.PI*2);ctx.fill();
+ line(-10,-41,-12+stride,0,'#10151c',15);line(13,-41,13-stride,0,'#10151c',15);rounded(-20+stride, -6,23,10,2,'#0a0f16');rounded(3-stride,-6,23,10,2,'#0a0f16');
+ line(-24,-84,-34+Math.sin(t)*4,-49,'#d5c0ab',16);line(24,-84,34-Math.sin(t)*4,-49,'#d5c0ab',16);rounded(-26,-100,52,65,10,'#141924');rounded(-20,-96,40,52,4,'#283244');rounded(-18,-85,36,5,2,'#6c54a6');rounded(-17,-75,14,21,3,'#111827');rounded(3,-75,14,21,3,'#101827');line(-21,-50,21,-50,'#4f5f70',4);
+ // head/face Muscmen with very short horns; deliberately without external ears or nose
+ rounded(-19,-141,38,39,11,'#d4bfa9');rounded(-20,-143,40,15,6,'#151923');ctx.fillStyle='#1a1a22';ctx.beginPath();ctx.moveTo(-15,-142);ctx.lineTo(-12,-156);ctx.lineTo(-3,-146);ctx.lineTo(4,-146);ctx.lineTo(12,-156);ctx.lineTo(15,-141);ctx.fill();rounded(-17,-115,34,15,7,'#28242a');rounded(-11,-127,7,3,1,'#f1d386');rounded(5,-127,7,3,1,'#f1d386');line(-5,-114,7,-114,'#f2d1b3',2);
+ if(p.att>0){ctx.strokeStyle=p.heavyCd>30?'#ba9bff':'#91f8df';ctx.lineWidth=p.heavyCd>30?16:10;ctx.globalAlpha=.8;ctx.beginPath();ctx.arc(35,-75,p.heavyCd>30?72:55,-1.15,1.05);ctx.stroke();ctx.globalAlpha=1;line(25,-81,42,-87,'#ddd5e8',14)}
+ else{line(27,-83,38+Math.sin(t)*2,-46,'#d5c0ab',15);line(37,-48,40,-44,'#161d27',6)}
+ if(p.dodge>0){ctx.globalAlpha=.25;rounded(-58,-126,45,85,10,'#8be8e0')}
+ ctx.restore();}
+function soldier(e){if(e.death<=0&&e.hp<=0)return;let x=e.x-cam,y=e.y;ctx.save();ctx.translate(x,y);ctx.scale(e.face,1);ctx.globalAlpha=e.hp<=0?clamp(e.death/23,0,1):1;ctx.fillStyle='#0a0f15';ctx.beginPath();ctx.ellipse(0,0,25,6,0,0,Math.PI*2);ctx.fill();let boss=e.boss,s=boss?1.3:1;ctx.scale(s,s);line(-10,-45,-13,0,'#252730',13);line(10,-45,13,0,'#252730',13);rounded(-20,-103,40,61,9,boss?'#3d354d':'#414550');rounded(-15,-91,30,25,4,boss?'#77568c':'#5d5b6a');rounded(-18,-139,36,40,9,'#8d7e7e');rounded(-21,-145,42,18,4,'#292737');rounded(-12,-126,25,7,2,'#e884a3');line(-21,-87,-30,-48,'#4d454d',12);line(21,-87,36,-54,'#4d454d',12);if(e.attackWindup>0){ctx.strokeStyle='#f98b9b';ctx.lineWidth=5;ctx.beginPath();ctx.arc(34,-74,49,-.8,.8);ctx.stroke();}ctx.restore();if(e.hp>0){let bw=boss?105:56;rounded(x-bw/2,y-(boss?211:166),bw,6,2,'#080f1b');rounded(x-bw/2,y-(boss?211:166),bw*(e.hp/e.maxhp),6,2,boss?'#c49bfa':'#ec8ba0');if(boss){ctx.font='bold 12px system-ui';ctx.textAlign='center';ctx.fillStyle='#ded8f2';ctx.fillText('COMANDANTE',x,y-222);ctx.textAlign='left';}}}
+function draw(){ctx.save();ctx.clearRect(0,0,W,H);if(shake>0)ctx.translate(rand(-shake,shake),rand(-shake,shake));bg();for(const e of enemies)soldier(e);rockford(player||{x:120,y:FLOOR,face:1,vx:0,inv:0,att:0,heavyCd:0,dodge:0});for(const p of particles){ctx.globalAlpha=clamp(p.life/p.max,0,1);ctx.fillStyle=p.col;ctx.fillRect(p.x-cam,p.y,p.r,p.r)}ctx.globalAlpha=1;ctx.restore();if(!player)return;
+ rounded(18,18,293,88,12,'#0a1425dc');ctx.font='bold 13px system-ui';ctx.fillStyle='#d9e5ef';ctx.fillText('ROCKFORD  //  FORÇAS ESPECIAIS',30,39);rounded(30,50,215,14,6,'#263c4e');rounded(30,50,215*player.hp/player.maxhp,14,6,player.hp>30?'#78ead6':'#ff879b');ctx.font='bold 12px system-ui';ctx.fillStyle='#d9e5ef';ctx.fillText(`${Math.ceil(player.hp)} / 100`,252,62);ctx.fillStyle='#aabbcf';ctx.font='11px system-ui';ctx.fillText(`SECTOR 0${wave+1}/03   •   PONTUAÇÃO ${score.toLocaleString('pt-PT')}`,30,85);
+ rounded(W-169,18,151,92,12,'#0a1425dc');ctx.font='bold 11px system-ui';ctx.fillStyle='#a1b1d3';ctx.fillText('ESTILO DE COMBATE',W-156,39);ctx.font='900 52px system-ui';ctx.fillStyle=grade()==='SSS'?'#cfb6ff':'#91eed9';ctx.fillText(grade(),W-153,91);if(combo>=2){ctx.font='bold 17px system-ui';ctx.fillStyle='#fff';ctx.textAlign='right';ctx.fillText(`${combo} ACERTOS`,W-24,130);ctx.textAlign='left';}
+ if(bannerTimer>0){ctx.globalAlpha=clamp(bannerTimer/20,0,1);rounded(W/2-208,137,416,44,9,'#0e2132e8');ctx.textAlign='center';ctx.font='bold 18px system-ui';ctx.fillStyle='#c4f1e7';ctx.fillText(banner,W/2,165);ctx.textAlign='left';ctx.globalAlpha=1;}
+ if(mode==='playing'&&gateOpen){ctx.textAlign='center';ctx.font='bold 15px system-ui';ctx.fillStyle='#a1f0d8';ctx.fillText('→ AVANÇA PARA A PRÓXIMA ZONA',W/2,220);ctx.textAlign='left';}
+ ctx.font='11px system-ui';ctx.fillStyle='#bed5e0';ctx.fillText('DEMO EXPERIMENTAL · ARTE PROVISÓRIA · HISTÓRIA NÃO CANÓNICA',18,H-14);
+}
+let last=performance.now();function loop(now){const dt=Math.min(2.1,(now-last)/16.667);last=now;update(dt);draw();requestAnimationFrame(loop)}
+function begin(){if(mode==='paused'){togglePause();return}reset();mode='playing';overlay.style.display='none';pauseBtn.style.display='block';}
+startBtn.addEventListener('click',begin);pauseBtn.addEventListener('click',togglePause);
+const keyNames={KeyA:'left',ArrowLeft:'left',KeyD:'right',ArrowRight:'right',Space:'jump',ArrowUp:'jump',KeyW:'jump',KeyJ:'attack',KeyL:'heavy',KeyK:'dodge'};
+addEventListener('keydown',e=>{if(e.code==='KeyP'||e.code==='Escape'){e.preventDefault();if(!e.repeat)togglePause();return}const k=keyNames[e.code];if(!k)return;e.preventDefault();if(!keys[k]&&mode==='playing'){if(k==='jump'&&player?.on){player.vy=-13.2;player.on=false;burst(player.x,player.y,'#9cdad7',9)}if(k==='attack')attack(false);if(k==='heavy')attack(true);if(k==='dodge')dodge();}keys[k]=true;});
+addEventListener('keyup',e=>{const k=keyNames[e.code];if(k){e.preventDefault();keys[k]=false}});addEventListener('blur',()=>{for(const k in keys)keys[k]=false});
+document.querySelectorAll('[data-key]').forEach(b=>{let k=b.dataset.key;function down(e){e.preventDefault();if(mode!=='playing')return;if(k==='jump'&&player?.on){player.vy=-13.2;player.on=false;burst(player.x,player.y,'#9cdad7',9)}if(k==='attack')attack(false);if(k==='heavy')attack(true);if(k==='dodge')dodge();keys[k]=true;b.setPointerCapture?.(e.pointerId)}function up(e){e.preventDefault();keys[k]=false}b.addEventListener('pointerdown',down);b.addEventListener('pointerup',up);b.addEventListener('pointercancel',up)});
+// Initial static scene; don't touch or overwrite existing game projects.
+player={x:124,y:FLOOR,face:1,vx:0,hp:100,maxhp:100,inv:0,att:0,heavyCd:0,dodge:0};enemies=[];particles=[];requestAnimationFrame(loop);
+})();
+</script>
+</body></html>
