@@ -2,13 +2,13 @@
 <html lang="pt-PT">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Rockford — Operação Zero | Protótipo 2D</title>
+<title>Rockford — Operação Zero | Pixel Art 0.2</title>
 <style>
 :root{color-scheme:dark;--bg:#080e1a;--card:#101c2dec;--accent:#b792fa;--mint:#75efd2;--danger:#f18d8c}
 *{box-sizing:border-box}html,body{height:100%;margin:0;background:var(--bg);font-family:system-ui,-apple-system,Segoe UI,sans-serif;color:#eef0fc;overflow:hidden}
-#game{display:block;width:100vw;height:100dvh;object-fit:contain;touch-action:none}
-#overlay{position:fixed;inset:0;background:radial-gradient(circle at 65% 38%,#243351ce,#080d18f2 70%);display:flex;align-items:center;justify-content:center;padding:22px;z-index:12}
-#panel{width:min(660px,94vw);border:1px solid #8394b260;background:#0d192cdb;backdrop-filter:blur(14px);padding:clamp(22px,5vw,40px);border-radius:22px;box-shadow:0 30px 110px #000b;}
+#game{display:block;width:100vw;height:100dvh;object-fit:contain;touch-action:none;image-rendering:pixelated}
+#overlay{position:fixed;inset:0;background:linear-gradient(115deg,#080c19e8,#131c33e5 65%,#080d18f2);display:flex;align-items:center;justify-content:center;padding:22px;z-index:12}
+#panel{width:min(660px,94vw);border:2px solid #7388a470;background:#0b1324e8;backdrop-filter:blur(11px);padding:clamp(22px,5vw,40px);border-radius:22px;box-shadow:0 30px 110px #000b;}
 #kicker{font-size:12px;letter-spacing:.24em;color:#96f2d7;font-weight:800;margin-bottom:12px}
 h1{font-size:clamp(34px,6vw,66px);line-height:.98;letter-spacing:-.06em;margin:0 0 16px}h1 span{color:#b7a1fa}#desc{font-size:15px;line-height:1.7;color:#cad3e5}
 #panel .tags{display:flex;gap:8px;flex-wrap:wrap;margin:16px 0 22px}.tags span{font-size:11px;color:#c4d4ea;background:#26364a;padding:6px 10px;border-radius:30px}
@@ -19,7 +19,7 @@ h1{font-size:clamp(34px,6vw,66px);line-height:.98;letter-spacing:-.06em;margin:0
 .touchGroup{display:flex;align-items:end;gap:9px}.tbtn{touch-action:none;user-select:none;pointer-events:auto;border:1px solid #d3e5f484;background:#152e48dc;box-shadow:inset 0 0 0 1px #0009;color:#fff;font-size:16px;font-weight:900;min-width:53px;height:53px;border-radius:13px}.tbtn.hit{background:#643b79ed}.tbtn.evade{background:#226b6eed}.tbtn.heavy{background:#5f477ded}.tbtn:active{filter:brightness(1.45)}
 #pause{position:fixed;right:15px;top:13px;border:1px solid #61788c;background:#152539d9;color:#fafafa;border-radius:11px;padding:9px 13px;cursor:pointer;z-index:7;display:none}
 @media(pointer:coarse){#touch{display:flex}#hudHelp{display:none}}
-@media(max-height:560px){#panel{padding:16px 22px}#kicker{margin-bottom:6px}h1{font-size:35px;margin-bottom:10px}#desc{font-size:13px;margin:6px 0}.hint{margin-top:8px}}
+@media(max-height:560px){#touch{padding-top:3px;padding-bottom:max(4px,env(safe-area-inset-bottom))}.tbtn{min-width:43px;height:43px;border-radius:10px;font-size:14px}.touchGroup{gap:6px}#pause{top:5px;right:6px;padding:6px 9px}#panel{padding:16px 22px}#kicker{margin-bottom:6px}h1{font-size:35px;margin-bottom:10px}#desc{font-size:13px;margin:6px 0}.hint{margin-top:8px}}
 </style>
 </head>
 <body>
@@ -27,7 +27,7 @@ h1{font-size:clamp(34px,6vw,66px);line-height:.98;letter-spacing:-.06em;margin:0
 <div id="hudHelp">A / D mover · ESPAÇO saltar · J combo · L golpe pesado · K esquiva · P pausa</div>
 <button id="pause">Ⅱ Pausa</button>
 <div id="touch" aria-label="Controlos de toque"><div class="touchGroup"><button class="tbtn" data-key="left">◀</button><button class="tbtn" data-key="right">▶</button></div><div class="touchGroup"><button class="tbtn" data-key="jump">↥</button><button class="tbtn hit" data-key="attack">J</button><button class="tbtn heavy" data-key="heavy">L</button><button class="tbtn evade" data-key="dodge">↯</button></div></div>
-<div id="overlay"><section id="panel"><div id="kicker">USLORDS · CONCEITO NÃO CANÓNICO · DEMO WEB</div><h1>ROCKFORD<span> / </span><br>OPERAÇÃO ZERO</h1><p id="desc">Um protótipo de hack and slash militar 2D. Rockford, durante o seu passado nas forças especiais Muscmen, atravessa uma instalação inimiga. Usa combos, esquiva e golpes pesados para vencer as três zonas.</p><div class="tags"><span>100% gratuito</span><span>Joga no navegador</span><span>Sem servidores</span><span>Arte provisória</span></div><button class="primary" id="start">INICIAR OPERAÇÃO</button><div class="hint">Teclado: <b>A/D</b> mover · <b>Espaço</b> saltar · <b>J</b> combo · <b>L</b> golpe pesado · <b>K</b> esquiva · <b>P</b> pausa. Também inclui comandos táteis.</div></section></div>
+<div id="overlay"><section id="panel"><div id="kicker">USLORDS · VERSÃO PIXEL ART 0.2 · DEMO WEB</div><h1>ROCKFORD<span> / </span><br>OPERAÇÃO ZERO</h1><p id="desc">Explora uma gruta militar, atravessa três setores e enfrenta o comandante. Combina ataques, esquivas e golpes pesados nesta aventura 2D em pixel art.</p><div class="tags"><span>100% gratuito</span><span>Joga no navegador</span><span>Sem servidores</span><span>Pixel art melhorada</span></div><button class="primary" id="start">JOGAR AGORA</button><div class="hint">Teclado: <b>A/D</b> mover · <b>Espaço</b> saltar · <b>J</b> combo · <b>L</b> golpe pesado · <b>K</b> esquiva · <b>P</b> pausa. Também inclui comandos táteis.</div></section></div>
 <script>
 (()=>{
 'use strict';
@@ -35,6 +35,14 @@ const canvas=document.getElementById('game'),ctx=canvas.getContext('2d'),overlay
 const W=960,H=540,FLOOR=439,WORLD=2520,keys={},was={},waves=[{gate:770,count:4,level:1,name:'PERÍMETRO'},{gate:1550,count:5,level:2,name:'DEPÓSITO'},{gate:2440,count:4,level:3,name:'COMANDO'}];
 let player,enemies,particles,cam=0,tick=0,mode='menu',wave=0,gateOpen=false,score=0,style=0,styleTimer=0,combo=0,comboTimer=0,shake=0,banner='',bannerTimer=0,hitStop=0,stars=[];
 for(let i=0;i<90;i++)stars.push({x:(i*83.83)%WORLD,y:20+(i*61)%310,r:.5+(i%3)*.3});
+// Graphical assets are optional: gameplay still runs with procedural fallback if a file is unavailable.
+const backdrop=new Image(), rockfordSheet=new Image(), enemySheet=new Image();
+backdrop.src='assets/cavern_base.png';
+rockfordSheet.src='assets/rockford_sheet.png';
+enemySheet.src='assets/enemy_sheet.png';
+const spriteReady=i=>i.complete&&i.naturalWidth>0;
+const lightMotes=Array.from({length:42},(_,i)=>({x:(i*247.7+42)%WORLD,y:80+(i*67)%350,phase:i*1.16,size:i%3===0?3:2}));
+
 const clamp=(v,min,max)=>Math.max(min,Math.min(max,v)); const pressed=(k)=>keys[k]&&!was[k];
 function rand(a,b){return a+Math.random()*(b-a)}
 function reset(){player={x:100,y:FLOOR,vx:0,vy:0,face:1,hp:100,maxhp:100,on:true,inv:0,att:0,attackCd:0,heavyCd:0,dodge:0,dodgeCd:0,comboStage:0,comboWindow:0,flash:0};enemies=[];particles=[];cam=0;tick=0;wave=0;gateOpen=false;score=0;style=0;styleTimer=0;combo=0;comboTimer=0;shake=0;banner='SETOR 01 // PERÍMETRO';bannerTimer=145;hitStop=0;for(const k in keys)keys[k]=false;spawnWave();}
@@ -69,32 +77,164 @@ function update(dt){tick+=dt;if(mode!=='playing')return;if(hitStop>0){hitStop-=d
 // Visuals intentionally do not claim to be final approved Rockford art.
 function rounded(x,y,w,h,r,fill){ctx.fillStyle=fill;ctx.beginPath();ctx.roundRect(x,y,w,h,r);ctx.fill();}
 function line(x,y,xx,yy,col,w=2){ctx.strokeStyle=col;ctx.lineWidth=w;ctx.lineCap='round';ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(xx,yy);ctx.stroke()}
-function bg(){let shift=cam*.18;const sky=ctx.createLinearGradient(0,0,0,H);sky.addColorStop(0,'#0a0f1d');sky.addColorStop(.8,'#19263c');sky.addColorStop(1,'#253548');ctx.fillStyle=sky;ctx.fillRect(0,0,W,H);
- for(let i=0;i<stars.length;i++){let s=stars[i],x=(s.x-shift*.3)%(W+140);if(x<0)x+=W+140;ctx.fillStyle='#c4e6ff33';ctx.fillRect(x,s.y,s.r,s.r)}
- const off=-cam*.28;for(let i=-2;i<13;i++){let x=i*190+off%190;rounded(x,180,144,265,3,'#23334a');rounded(x+16,193,14,200,1,'#324b66');rounded(x+52,219,62,5,1,'#80c5d435');for(let j=0;j<5;j++)rounded(x+26+j*22,258,10,34,1,'#7693ac22');line(x,180,x+75,135,'#334b61',3)}
- for(let i=-2;i<18;i++){let x=i*110-cam*.52%110;rounded(x,302,97,148,2,'#17263b');rounded(x+8,310,79,19,1,'#324a63');line(x+20,334,x+20,429,'#4e687a',2);line(x+70,334,x+70,429,'#4e687a',2)}
- ctx.fillStyle='#263446';ctx.fillRect(0,FLOOR,W,H-FLOOR);ctx.fillStyle='#68a3aa';ctx.fillRect(0,FLOOR,W,3);for(let i=-1;i<21;i++){let x=i*135-cam%135;rounded(x+8,FLOOR+28,80,5,2,'#546075');rounded(x+15,FLOOR+60,18,4,2,'#121b2a')}
- for(let x=450;x<WORLD;x+=330){let a=x-cam;if(a< -100||a>W+100)continue;rounded(a-22,FLOOR-59,70,59,2,'#263345');ctx.strokeStyle='#65768b';ctx.lineWidth=3;ctx.strokeRect(a-22,FLOOR-59,70,59);line(a-22,FLOOR-59,a+48,FLOOR,'#65768b',2);line(a+48,FLOOR-59,a-22,FLOOR,'#65768b',2)}
- const g=waves[wave];if(g){let a=g.gate-cam;rounded(a-8,169,15,FLOOR-169,2,gateOpen?'#355f67':'#6b324f');rounded(a-15,167,30,21,3,gateOpen?'#86eed5':'#f498b2');ctx.fillStyle='#e9ebf5';ctx.font='bold 12px system-ui';ctx.fillText(gateOpen?'LIVRE':'BLOQUEADO',a-50,152);}
+function poly(coords,fill){ctx.fillStyle=fill;ctx.beginPath();ctx.moveTo(coords[0][0],coords[0][1]);for(let k=1;k<coords.length;k++)ctx.lineTo(coords[k][0],coords[k][1]);ctx.closePath();ctx.fill();}
+function glow(x,y,r,color){const grad=ctx.createRadialGradient(x,y,1,x,y,r);grad.addColorStop(0,color);grad.addColorStop(1,'#00000000');ctx.fillStyle=grad;ctx.fillRect(x-r,y-r,r*2,r*2);}
+function bg(){
+ ctx.imageSmoothingEnabled=false;
+ ctx.fillStyle='#080d19';ctx.fillRect(0,0,W,H);
+ if(spriteReady(backdrop)){
+   // A parallax crop has no seams, including on wide phone screens.
+   const ofs=clamp(cam*.11,0,220);
+   ctx.save();
+   if(wave===1)ctx.filter='hue-rotate(-15deg) saturate(.86) brightness(.85)';
+   else if(wave===2)ctx.filter='hue-rotate(38deg) saturate(.85) brightness(.70)';
+   ctx.drawImage(backdrop,-ofs,-1,1184,578);
+   ctx.restore();
+ }else{
+   const grad=ctx.createLinearGradient(0,0,0,H);grad.addColorStop(0,'#111624');grad.addColorStop(.52,'#1a3544');grad.addColorStop(1,'#313149');ctx.fillStyle=grad;ctx.fillRect(0,0,W,H);
+   for(let i=-2;i<12;i++){
+     let x=i*130-cam*.12%130;
+     poly([[x,400],[x+15,200],[x+75,162],[x+112,330],[x+142,470]],i%2?'#18293a':'#152436');
+     rectPx(x+30,320,5,46,'#e2935a');
+   }
+   ctx.fillStyle='#343b4f';ctx.fillRect(0,FLOOR,W,H-FLOOR);
+ }
+ // Subtle ambient particles and lighting bring the still background to life.
+ ctx.save();ctx.globalCompositeOperation='screen';
+ glow(173-cam*.06,305,110,'#a24b6a22');
+ glow(745-cam*.05,257,170,wave===2?'#a893ff19':'#6ad9f51a');
+ ctx.restore();
+ for(let i=0;i<lightMotes.length;i++){
+   const m=lightMotes[i],x=m.x-cam*.42;
+   if(x<-10||x>W+10)continue;
+   const yy=m.y+Math.sin(tick*.018+m.phase)*8;
+   ctx.globalAlpha=.20+.18*Math.sin(tick*.03+m.phase);
+   rectPx(x,yy,m.size,m.size,i%3===0?'#ffa3df':'#99d4ed');
+ }
+ ctx.globalAlpha=1;
+ // Rock ledge seam consistent with collisions, overlaid on generated image.
+ ctx.fillStyle='#858e9f55';ctx.fillRect(0,FLOOR,W,2);
+ ctx.fillStyle='#14172244';ctx.fillRect(0,FLOOR+3,W,3);
+ for(let i=0;i<18;i++){
+    const wx=Math.floor((i*163+74-cam)%W); if(wx<-12)continue;
+    poly([[wx,FLOOR+7],[wx+17,FLOOR+6],[wx+27,FLOOR+14],[wx+20,FLOOR+21],[wx+4,FLOOR+23]],i%2===0?'#77829b55':'#51597355');
+ }
+ // Occasional foreground equipment: crates sit against background instead of flat blocks.
+ for(let x=380;x<WORLD;x+=370){let a=x-cam;if(a<-92||a>W+92)continue;
+    const y=FLOOR-48;
+    ctx.fillStyle='#111c2a';ctx.fillRect(a-6,y-4,78,52);
+    ctx.fillStyle='#2e3f4d';ctx.fillRect(a-3,y-1,72,46);
+    ctx.fillStyle='#4c5a65';ctx.fillRect(a,y+1,68,4);
+    ctx.fillStyle='#111b2a';ctx.fillRect(a+8,y+11,52,22);
+    rectPx(a+7,y+7,7,32,'#566573');rectPx(a+56,y+7,6,32,'#566573');
+    for(let k=0;k<3;k++)poly([[a+15+k*12,y+19],[a+19+k*12,y+19],[a+14+k*12,y+24],[a+10+k*12,y+24]],'#c9915b');
+    rectPx(a-8,y-4,76,4,'#182538');
+ }
+ // Sector barriers are the actual combat gates.
+ const sector=waves[wave];
+ if(sector){let a=sector.gate-cam;
+   if(a>-48&&a<W+48){
+     const gc=gateOpen?'#7adecc':'#dd718a';
+     ctx.fillStyle='#121a28';ctx.fillRect(a-15,174,28,FLOOR-174);
+     ctx.fillStyle=gateOpen?'#2c5b54':'#55314b';ctx.fillRect(a-11,184,19,FLOOR-190);
+     for(let k=0;k<6;k++){rectPx(a-12,219+k*33,20,3,gateOpen?'#52948c':'#a35e73');}
+     rectPx(a-18,167,35,17,'#1d2533');rectPx(a-13,171,25,8,gc);
+     ctx.textAlign='center';ctx.font='bold 11px monospace';ctx.fillStyle=gc;ctx.fillText(gateOpen?'LIVRE':'BLOQUEADO',a,155);ctx.textAlign='left';
+     if(!gateOpen){ctx.save();ctx.globalAlpha=.17;ctx.fillStyle=gc;ctx.fillRect(a-5,188,6,FLOOR-188);ctx.restore();}
+   }
+ }
 }
-function rockford(p){const x=p.x-cam,y=p.y,f=p.face,t=tick*.2;ctx.save();ctx.translate(x,y);ctx.scale(f,1);if(p.inv>0&&Math.floor(tick/4)%2===0)ctx.globalAlpha=.56;
- const stride=Math.sin(t)*Math.min(1,Math.abs(p.vx)/5)*14; // stylized placeholder: short horns, NO ears, NO external nose
- ctx.fillStyle='#0c1320';ctx.beginPath();ctx.ellipse(0,-1,29,7,0,0,Math.PI*2);ctx.fill();
- line(-10,-41,-12+stride,0,'#10151c',15);line(13,-41,13-stride,0,'#10151c',15);rounded(-20+stride, -6,23,10,2,'#0a0f16');rounded(3-stride,-6,23,10,2,'#0a0f16');
- line(-24,-84,-34+Math.sin(t)*4,-49,'#d5c0ab',16);line(24,-84,34-Math.sin(t)*4,-49,'#d5c0ab',16);rounded(-26,-100,52,65,10,'#141924');rounded(-20,-96,40,52,4,'#283244');rounded(-18,-85,36,5,2,'#6c54a6');rounded(-17,-75,14,21,3,'#111827');rounded(3,-75,14,21,3,'#101827');line(-21,-50,21,-50,'#4f5f70',4);
- // head/face Muscmen with very short horns; deliberately without external ears or nose
- rounded(-19,-141,38,39,11,'#d4bfa9');rounded(-20,-143,40,15,6,'#151923');ctx.fillStyle='#1a1a22';ctx.beginPath();ctx.moveTo(-15,-142);ctx.lineTo(-12,-156);ctx.lineTo(-3,-146);ctx.lineTo(4,-146);ctx.lineTo(12,-156);ctx.lineTo(15,-141);ctx.fill();rounded(-17,-115,34,15,7,'#28242a');rounded(-11,-127,7,3,1,'#f1d386');rounded(5,-127,7,3,1,'#f1d386');line(-5,-114,7,-114,'#f2d1b3',2);
- if(p.att>0){ctx.strokeStyle=p.heavyCd>30?'#ba9bff':'#91f8df';ctx.lineWidth=p.heavyCd>30?16:10;ctx.globalAlpha=.8;ctx.beginPath();ctx.arc(35,-75,p.heavyCd>30?72:55,-1.15,1.05);ctx.stroke();ctx.globalAlpha=1;line(25,-81,42,-87,'#ddd5e8',14)}
- else{line(27,-83,38+Math.sin(t)*2,-46,'#d5c0ab',15);line(37,-48,40,-44,'#161d27',6)}
- if(p.dodge>0){ctx.globalAlpha=.25;rounded(-58,-126,45,85,10,'#8be8e0')}
- ctx.restore();}
-function soldier(e){if(e.death<=0&&e.hp<=0)return;let x=e.x-cam,y=e.y;ctx.save();ctx.translate(x,y);ctx.scale(e.face,1);ctx.globalAlpha=e.hp<=0?clamp(e.death/23,0,1):1;ctx.fillStyle='#0a0f15';ctx.beginPath();ctx.ellipse(0,0,25,6,0,0,Math.PI*2);ctx.fill();let boss=e.boss,s=boss?1.3:1;ctx.scale(s,s);line(-10,-45,-13,0,'#252730',13);line(10,-45,13,0,'#252730',13);rounded(-20,-103,40,61,9,boss?'#3d354d':'#414550');rounded(-15,-91,30,25,4,boss?'#77568c':'#5d5b6a');rounded(-18,-139,36,40,9,'#8d7e7e');rounded(-21,-145,42,18,4,'#292737');rounded(-12,-126,25,7,2,'#e884a3');line(-21,-87,-30,-48,'#4d454d',12);line(21,-87,36,-54,'#4d454d',12);if(e.attackWindup>0){ctx.strokeStyle='#f98b9b';ctx.lineWidth=5;ctx.beginPath();ctx.arc(34,-74,49,-.8,.8);ctx.stroke();}ctx.restore();if(e.hp>0){let bw=boss?105:56;rounded(x-bw/2,y-(boss?211:166),bw,6,2,'#080f1b');rounded(x-bw/2,y-(boss?211:166),bw*(e.hp/e.maxhp),6,2,boss?'#c49bfa':'#ec8ba0');if(boss){ctx.font='bold 12px system-ui';ctx.textAlign='center';ctx.fillStyle='#ded8f2';ctx.fillText('COMANDANTE',x,y-222);ctx.textAlign='left';}}}
-function draw(){ctx.save();ctx.clearRect(0,0,W,H);if(shake>0)ctx.translate(rand(-shake,shake),rand(-shake,shake));bg();for(const e of enemies)soldier(e);rockford(player||{x:120,y:FLOOR,face:1,vx:0,inv:0,att:0,heavyCd:0,dodge:0});for(const p of particles){ctx.globalAlpha=clamp(p.life/p.max,0,1);ctx.fillStyle=p.col;ctx.fillRect(p.x-cam,p.y,p.r,p.r)}ctx.globalAlpha=1;ctx.restore();if(!player)return;
- rounded(18,18,293,88,12,'#0a1425dc');ctx.font='bold 13px system-ui';ctx.fillStyle='#d9e5ef';ctx.fillText('ROCKFORD  //  FORÇAS ESPECIAIS',30,39);rounded(30,50,215,14,6,'#263c4e');rounded(30,50,215*player.hp/player.maxhp,14,6,player.hp>30?'#78ead6':'#ff879b');ctx.font='bold 12px system-ui';ctx.fillStyle='#d9e5ef';ctx.fillText(`${Math.ceil(player.hp)} / 100`,252,62);ctx.fillStyle='#aabbcf';ctx.font='11px system-ui';ctx.fillText(`SECTOR 0${wave+1}/03   •   PONTUAÇÃO ${score.toLocaleString('pt-PT')}`,30,85);
- rounded(W-169,18,151,92,12,'#0a1425dc');ctx.font='bold 11px system-ui';ctx.fillStyle='#a1b1d3';ctx.fillText('ESTILO DE COMBATE',W-156,39);ctx.font='900 52px system-ui';ctx.fillStyle=grade()==='SSS'?'#cfb6ff':'#91eed9';ctx.fillText(grade(),W-153,91);if(combo>=2){ctx.font='bold 17px system-ui';ctx.fillStyle='#fff';ctx.textAlign='right';ctx.fillText(`${combo} ACERTOS`,W-24,130);ctx.textAlign='left';}
- if(bannerTimer>0){ctx.globalAlpha=clamp(bannerTimer/20,0,1);rounded(W/2-208,137,416,44,9,'#0e2132e8');ctx.textAlign='center';ctx.font='bold 18px system-ui';ctx.fillStyle='#c4f1e7';ctx.fillText(banner,W/2,165);ctx.textAlign='left';ctx.globalAlpha=1;}
- if(mode==='playing'&&gateOpen){ctx.textAlign='center';ctx.font='bold 15px system-ui';ctx.fillStyle='#a1f0d8';ctx.fillText('→ AVANÇA PARA A PRÓXIMA ZONA',W/2,220);ctx.textAlign='left';}
- ctx.font='11px system-ui';ctx.fillStyle='#bed5e0';ctx.fillText('DEMO EXPERIMENTAL · ARTE PROVISÓRIA · HISTÓRIA NÃO CANÓNICA',18,H-14);
+function rectPx(x,y,w,h,col){ctx.fillStyle=col;ctx.fillRect(Math.round(x),Math.round(y),Math.round(w),Math.round(h));}
+function shadow(x,y,width=38){ctx.save();ctx.globalAlpha=.32;ctx.fillStyle='#040912';ctx.beginPath();ctx.ellipse(x,y,width,7,0,0,Math.PI*2);ctx.fill();ctx.restore();}
+function rockford(p){
+ const x=p.x-cam,y=p.y;
+ shadow(x,y+2,31);
+ ctx.save();ctx.translate(Math.round(x),Math.round(y));ctx.scale(p.face,1);
+ if(p.inv>0&&Math.floor(tick/4)%2===0)ctx.globalAlpha=.57;
+ if(spriteReady(rockfordSheet)){
+   const moving=Math.abs(p.vx)>1.1;
+   const frame=p.dodge>0?8:p.flash>0?9:p.att>0?(p.heavyCd>30?7:p.comboStage===2?6:5):!p.on?4:moving?1+(Math.floor(tick/7)%3):0;
+   ctx.drawImage(rockfordSheet,frame*64,0,64,92,-65,-157,130,166);
+ }else{
+   rectPx(-20,-106,40,65,'#37464a');rectPx(-17,-143,34,37,'#c5947c');rectPx(-16,-149,33,17,'#55382f');
+   rectPx(-18,-42,13,40,'#2b343d');rectPx(5,-42,13,40,'#2b343d');
+ }
+ // Dynamic attack effect only while active, never a permanent weapon image.
+ if(p.att>0){
+   const heavy=p.heavyCd>30;
+   ctx.save();ctx.globalCompositeOperation='screen';
+   ctx.lineCap='round';ctx.lineWidth=heavy?14:9;ctx.strokeStyle=heavy?'#a992ffbb':'#b7fff1aa';
+   ctx.beginPath();ctx.arc(16,-83,heavy?90:67,-.95,heavy?.67:.8);ctx.stroke();
+   ctx.lineWidth=3;ctx.strokeStyle='#f9f0fc';ctx.beginPath();ctx.arc(16,-83,heavy?96:70,-.92,.65);ctx.stroke();ctx.restore();
+ }
+ if(p.dodge>0){ctx.globalAlpha=.2;ctx.fillStyle='#9beaf1';ctx.fillRect(-67,-128,34,99);}
+ ctx.restore();
+}
+function soldier(e){
+ if(e.death<=0&&e.hp<=0)return;
+ const x=e.x-cam,y=e.y,boss=e.boss,s=boss?1.30:1;
+ shadow(x,y+1,boss?41:26);
+ ctx.save();ctx.translate(Math.round(x),Math.round(y));ctx.scale(e.face*s,s);
+ ctx.globalAlpha=e.hp<=0?clamp(e.death/23,0,1):1;
+ if(spriteReady(enemySheet)){
+   const variant=boss?2:(e.phase===1?1:0);
+   const state=e.attackWindup>0?2:Math.abs(e.vx)>1?1:0;
+   if(e.hit>0)ctx.filter='brightness(1.7)';
+   ctx.drawImage(enemySheet,(variant*3+state)*64,0,64,92,-64,-153,128,159);
+   ctx.filter='none';
+ }else{
+   rectPx(-20,-110,40,70,boss?'#70567d':'#50546a');rectPx(-19,-143,38,35,'#313040');rectPx(-12,-125,24,8,'#eb7897');
+   rectPx(-16,-40,13,39,'#313040');rectPx(5,-40,13,39,'#313040');
+ }
+ ctx.restore();
+ if(e.hp>0){const bw=boss?116:59,hy=y-(boss?222:164);
+   rectPx(x-bw/2,hy,bw,8,'#10101ef2');rectPx(x-bw/2+2,hy+2,(bw-4)*e.hp/e.maxhp,4,boss?'#c49bff':'#f2809e');
+   if(boss){ctx.textAlign='center';ctx.fillStyle='#f1deee';ctx.font='bold 12px monospace';ctx.fillText('COMANDANTE',x,hy-10);ctx.textAlign='left';}
+ }
+}
+function drawHud(){
+ if(!player)return;
+ ctx.save();ctx.imageSmoothingEnabled=false;
+ // player portrait and HUD, pixel-art inspired rather than floating translucent cards
+ rectPx(15,12,313,95,'#0d1322e8');rectPx(15,12,313,2,'#7184a0');
+ rectPx(22,18,73,79,'#171a2c');rectPx(25,21,67,72,'#323348');
+ if(spriteReady(rockfordSheet))ctx.drawImage(rockfordSheet,0,0,64,70,21,14,75,91);
+ ctx.fillStyle='#f4eaf6';ctx.font='900 19px monospace';ctx.fillText('ROCKFORD',104,36);
+ ctx.fillStyle='#aab7c8';ctx.font='bold 10px monospace';ctx.fillText('OPERAÇÃO ZERO',105,49);
+ rectPx(105,59,198,14,'#1b2030');rectPx(107,61,194*player.hp/player.maxhp,10,player.hp>30?'#db587d':'#ea9b5f');
+ rectPx(105,80,198,7,'#1b2030');rectPx(107,82,Math.min(194,194*style/550),3,'#79dfeb');
+ ctx.fillStyle='#fff';ctx.font='bold 10px monospace';ctx.fillText(`${Math.ceil(player.hp)} / 100 HP`,221,69);
+ ctx.fillStyle='#b6c3d4';ctx.font='bold 11px monospace';ctx.fillText(`SETOR 0${wave+1}/03`,22,119);
+ // Right side mission readout and grade
+ rectPx(673,12,269,66,'#0c1524e4');rectPx(673,12,269,2,'#7488a4');
+ ctx.fillStyle='#e8cfaf';ctx.font='bold 11px monospace';ctx.fillText('◆ OBJETIVO',685,30);
+ ctx.fillStyle='#e0e8f1';ctx.font='bold 14px monospace';
+ ctx.fillText(gateOpen?'AVANÇAR →':wave===2?'DERROTA O COMANDANTE':'ELIMINA OS GUARDAS',685,52);
+ ctx.font='bold 11px monospace';ctx.fillStyle='#b7cad8';ctx.fillText(`PONTOS ${score.toLocaleString('pt-PT')}`,685,67);
+ if(combo>=2||style>22){
+   const g=grade();ctx.textAlign='right';ctx.font='900 57px monospace';
+   ctx.shadowColor='#f89a65';ctx.shadowBlur=14;ctx.fillStyle=['SSS','SS','S'].includes(g)?'#ffc281':'#a9f2e5';ctx.fillText(g,924,154);ctx.shadowBlur=0;
+   ctx.font='bold 14px monospace';ctx.fillStyle='#e8edfa';ctx.fillText(`${combo>=2?combo+' ACERTOS':'ESTILO'}`,923,173);ctx.textAlign='left';
+ }
+ if(bannerTimer>0){ctx.globalAlpha=clamp(bannerTimer/22,0,1);rectPx(245,151,470,44,'#111c31e8');rectPx(245,151,470,2,'#c6a3da');ctx.fillStyle='#d6eef8';ctx.textAlign='center';ctx.font='bold 17px monospace';ctx.fillText(banner,W/2,177);ctx.globalAlpha=1;ctx.textAlign='left';}
+ if(gateOpen&&mode==='playing'){
+   ctx.fillStyle='#b1f2d5';ctx.textAlign='center';ctx.font='bold 17px monospace';ctx.fillText('→ SEGUE PARA O PRÓXIMO SETOR',W/2,231);ctx.textAlign='left';
+ }
+ ctx.fillStyle='#d8d9e9ad';ctx.font='10px monospace';ctx.fillText('PIXEL ART 0.2  •  DEMO NÃO CANÓNICA  •  GRATUITO',18,H-13);
+ ctx.restore();
+}
+function draw(){
+ ctx.save();ctx.clearRect(0,0,W,H);
+ if(shake>0)ctx.translate(Math.round(rand(-shake,shake)),Math.round(rand(-shake,shake)));
+ bg();
+ for(const e of enemies)soldier(e);
+ if(player)rockford(player);
+ for(const p of particles){
+   ctx.globalAlpha=clamp(p.life/p.max,0,1);
+   const size=Math.max(2,Math.round(p.r*1.5));
+   ctx.fillStyle=p.col;ctx.fillRect(Math.round(p.x-cam),Math.round(p.y),size,size);
+ }
+ ctx.globalAlpha=1;ctx.restore();drawHud();
 }
 let last=performance.now();function loop(now){const dt=Math.min(2.1,(now-last)/16.667);last=now;update(dt);draw();requestAnimationFrame(loop)}
 function begin(){if(mode==='paused'){togglePause();return}reset();mode='playing';overlay.style.display='none';pauseBtn.style.display='block';}
